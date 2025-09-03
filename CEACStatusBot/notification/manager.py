@@ -25,12 +25,16 @@ class NotificationManager():
         # Load the previous statuses from the file
         statuses = self.__load_statuses()
 
-        # Check if the current status is different from the last recorded status
-        if not statuses or current_status != statuses[-1]['status']:
-            self.__save_current_status(current_status)
-            self.__send_notifications(res)
-        else:
-            print("Status unchanged. No notification sent.")
+        # Bypass status check
+        self.__save_current_status(current_status)
+        self.__send_notifications(res)
+
+        # Optional: Check if the current status is different from the last recorded status
+        # if not statuses or current_status != statuses[-1]['status']:
+            # self.__save_current_status(current_status)
+            # self.__send_notifications(res)
+        # else:
+        #     print("Status unchanged. No notification sent.")
 
     def __load_statuses(self) -> list:
         if os.path.exists(self.__status_file):
@@ -59,12 +63,12 @@ class NotificationManager():
                 print("TIMEZONE Error")
                 localTime = datetime.datetime.now()
 
-            if localTime.hour < 8 or localTime.hour > 22:
+            if localTime.hour < 8:
                 print("In Manager, no disturbing time")
                 return
-            if localTime.minute > 30:
-                print("In Manager, no disturbing time")
-                return
+            # if localTime.minute > 30:
+            #     print("In Manager, no disturbing time")
+            #     return
 
         for notificationHandle in self.__handleList:
             notificationHandle.send(res)
